@@ -34,29 +34,41 @@
             padding: 20px 0;
             font-size: 0.9rem;
         }
+
+        /* FITUR BARU: Efek Hover Cokelat Klasik pada Tombol */
+        .btn-custom-outline {
+            color: #f8f4f1;
+            border: 2px solid #f8f4f1;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-custom-outline:hover {
+            background-color: #2b1506 !important; /* Warna cokelat tua khas E-Perpus */
+            border-color: #2b1506 !important;
+            color: #d7ccc8 !important; /* Warna krem lembut agar teks tetap jelas */
+            transform: translateY(-2px); /* Efek sedikit terangkat saat disorot */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body>
 
     <div class="bg-image">
-        <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark pt-3">
             <div class="container">
                 <a class="navbar-brand fw-bold" href="#"><i class="bi bi-book"></i> E-PERPUS</a>
                 <div class="ms-auto">
-                    <a href="/login" class="btn btn-outline-light rounded-pill px-4 me-2">Login</a>
-                    <a href="/register" class="btn btn-outline-light rounded-pill px-4 me-2">Register</a>
+                    <a href="/login" class="btn btn-custom-outline rounded-pill px-4 me-2">Login</a>
+                    <a href="/register" class="btn btn-custom-outline rounded-pill px-4 me-2">Daftar</a>
                 </div>
             </div>
         </nav>
 
-        <!-- Hero Content -->
         <div class="hero-text">
             <h1>Selamat Datang di E-Perpus</h1>
             <p>Cari buku favoritmu, reservasi online, dan ambil maksimal dalam waktu 2 jam.</p>
         </div>
 
-        <!-- Info Footer (Jam Operasional & Lokasi) -->
         <div class="footer-info">
             <div class="container">
                 <div class="row text-center text-md-start">

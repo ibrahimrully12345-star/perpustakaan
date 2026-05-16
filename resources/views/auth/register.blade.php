@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body {
-            /* Background luar senada dengan Login */
             background: rgba(243, 228, 216, 0.95);
             height: 100vh;
             display: flex;
@@ -20,22 +19,20 @@
             border-radius: 20px;
             border: none;
             width: 100%;
-            max-width: 450px;
+            max-width: 420px; /* Diperkecil sedikit dari 450px agar proporsional */
             overflow: hidden;
-            /* Warna cokelat medium senada dengan Login */
             background: rgba(173, 139, 106, 0.95);
             backdrop-filter: blur(10px);
         }
         .register-header {
-            /* Warna cokelat tua senada dengan Login */
             background-color: #2b1506;
             color: white;
-            padding: 30px;
+            padding: 20px; /* Diperkecil agar menghemat ruang atas */
             text-align: center;
         }
         .form-control {
             border-radius: 10px;
-            padding: 12px 15px;
+            padding: 10px 15px; /* Padding input dibuat lebih ramping */
             border: 1px solid #ddd;
         }
         .form-control:focus {
@@ -43,7 +40,6 @@
             border-color: #2b1506;
         }
         .btn-register {
-            /* Gradient cokelat tua ke emas gelap */
             background: linear-gradient(to right, #3a180a, #5f4818);
             border: none;
             color: white;
@@ -62,44 +58,62 @@
 </head>
 <body>
 
-<div class="card card-register shadow-lg">
+<div class="card card-register shadow-lg mx-3">
     <div class="register-header">
-        <i class="bi bi-person-plus fs-1"></i>
-        <h4 class="fw-bold mt-2 mb-0">DAFTAR AKUN</h4>
-        <p class="small opacity-75 mb-0">Bergabunglah menjadi anggota E-Perpus</p>
+        <i class="bi bi-person-plus fs-2"></i> <h5 class="fw-bold mt-1 mb-0">DAFTAR AKUN</h5>
+        <p class="small opacity-75 mb-0" style="font-size: 12px;">Bergabunglah menjadi anggota E-Perpus</p>
     </div>
-    <div class="card-body p-4 p-md-5">
+    <div class="card-body p-4 py-3"> @if ($errors->any())
+            <div class="alert alert-danger border-0 shadow-sm mb-3 py-2 small" style="border-radius: 10px;">
+                <ul class="mb-0 ps-3">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         
         <form action="/register" method="POST">
             @csrf
-            <div class="mb-3">
-                <label class="form-label small fw-bold text-dark-brown">NAMA LENGKAP</label>
+            <div class="mb-2">
+                <label class="form-label small fw-bold text-dark-brown mb-1">Nama Lengkap</label>
                 <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
-                    <input type="text" name="name" class="form-control border-start-0" placeholder="Nama lengkap Anda" required autofocus>
+                    <span class="input-group-text bg-light border-end-0 py-1"><i class="bi bi-person text-muted"></i></span>
+                    <input type="text" name="name" class="form-control border-start-0" placeholder="Nama lengkap Anda" value="{{ old('name') }}" required autofocus>
                 </div>
             </div>
-            <div class="mb-3">
-                <label class="form-label small fw-bold text-dark-brown">EMAIL</label>
+            
+            <div class="mb-2">
+                <label class="form-label small fw-bold text-dark-brown mb-1">Email</label>
                 <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
-                    <input type="email" name="email" class="form-control border-start-0" placeholder="nama@email.com" required>
+                    <span class="input-group-text bg-light border-end-0 py-1"><i class="bi bi-envelope text-muted"></i></span>
+                    <input type="email" name="email" class="form-control border-start-0" placeholder="nama@email.com" value="{{ old('email') }}" required>
                 </div>
             </div>
-            <div class="mb-4">
-                <label class="form-label small fw-bold text-dark-brown">PASSWORD</label>
+            
+            <div class="mb-2">
+                <label class="form-label small fw-bold text-dark-brown mb-1">Password</label>
                 <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
-                    <input type="password" name="password" class="form-control border-start-0" placeholder="Minimal 5 karakter" required>
+                    <span class="input-group-text bg-light border-end-0 py-1"><i class="bi bi-lock text-muted"></i></span>
+                    <input type="password" name="password" class="form-control border-start-0" placeholder="Minimal 6 karakter" required>
                 </div>
             </div>
+            
+            <div class="mb-2">
+                <label class="form-label small fw-bold text-dark-brown mb-1">Ulangi Password</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 py-1"><i class="bi bi-shield-lock text-muted"></i></span>
+                    <input type="password" name="password_confirmation" class="form-control border-start-0" placeholder="Ulangi password" required>
+                </div>
+            </div>
+
             <div class="d-grid">
                 <button type="submit" class="btn btn-register rounded-pill py-2 shadow-sm">Daftar Sekarang</button>
             </div>
         </form>
 
-        <div class="text-center mt-4 small text-dark-brown">
-            Sudah punya akun? <a href="/login" class="fw-bold text-decoration-none" style="color: #007bff;">Masuk di sini</a>
+        <div class="text-center mt-3 small text-dark-brown">
+            Sudah punya akun? <a href="/login" class="fw-bold text-decoration-none" style="color: #2b1506; border-bottom: 2px solid #2b1506;">Masuk di sini</a>
         </div>
     </div>
 </div>

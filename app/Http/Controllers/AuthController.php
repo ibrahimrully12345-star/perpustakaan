@@ -19,7 +19,11 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials)) {
+        // FITUR BARU: Menangkap nilai checkbox 'remember' (bernilai true jika dicentang)
+        $remember = $request->has('remember');
+
+        // Memasukkan variabel $remember ke dalam Auth::attempt agar session tersimpan lama
+        if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
             if (Auth::user()->role == 'admin' || Auth::user()->role == 'petugas') {
                 return redirect('/dashboard');
@@ -36,10 +40,15 @@ class AuthController extends Controller
 
     // FUNGSI 1: Untuk Registrasi Mandiri (Hanya Peminjam) - Dipakai di halaman depan
     public function register(Request $request) {
+        // PERBAIKAN VALIDASI: Minimal 6 karakter dan wajib COCOK dengan input confirmation
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:5'
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed' // 'confirmed' otomatis mengecek password_confirmation
+        ], [
+            'password.min' => 'Password minimal harus 6 karakter!',
+            'password.confirmed' => 'Konfirmasi ulangi password tidak cocok!',
+            'email.unique' => 'Alamat email ini sudah terdaftar!'
         ]);
 
         User::create([
@@ -79,22 +88,22 @@ class AuthController extends Controller
 
     // FUNGSI 4: Memproses Update User
     public function updateUser(Request $request, $id) {
-    $user = User::findOrFail($id);
-    
-    // Validasi hanya untuk Nama dan Role
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'role' => 'required'
-    ]);
+        $user = User::findOrFail($id);
+        
+        // Validasi hanya untuk Nama dan Role
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'role' => 'required'
+        ]);
 
-    $user->name = $request->name;
-    $user->role = $request->role;
+        $user->name = $request->name;
+        $user->role = $request->role;
 
-    // Logika password dan email dihapus demi privasi user
-    $user->save();
+        // Logika password dan email dihapus demi privasi user
+        $user->save();
 
-    return redirect('/users')->with('success', 'Data pengguna berhasil diperbarui.');
-}
+        return redirect('/users')->with('success', 'Data pengguna berhasil diperbarui.');
+    }
 
     public function logout(Request $request) {
         Auth::logout();
