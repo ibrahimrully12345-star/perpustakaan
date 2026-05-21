@@ -9,7 +9,7 @@
                     <h5 class="fw-bold mb-0">Tambah Pengguna Baru</h5>
                 </div>
                 <div class="card-body p-4">
-                    <form action="/users/simpan" method="POST">
+                    <form action="/users/simpan" method="POST" onsubmit="return confirm('Apakah Anda yakin untuk menambahkan user bernama \'' + this.name.value + '\' dengan role \'' + this.role.value + '\' ke dalam sistem?')">
                         @csrf
                         <div class="mb-3">
                             <label class="form-label fw-bold">Nama Lengkap</label>

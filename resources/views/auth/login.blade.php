@@ -86,7 +86,7 @@
                 <label class="form-label small fw-bold text-dark-brown">Email</label>
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
-                    <input type="email" name="email" class="form-control border-start-0" placeholder="nama@email.com" required autofocus>
+                    <input type="email" name="email" class="form-control border-start-0" placeholder="nama@email.com" value="{{ old('email') }}" required autofocus>
                 </div>
             </div>
             

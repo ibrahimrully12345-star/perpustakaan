@@ -6,7 +6,7 @@
 
     <div class="card shadow-sm border-0 col-md-6">
         <div class="card-body p-4">
-            <form action="/users/{{ $user->id }}" method="POST">
+            <form action="/users/{{ $user->id }}" method="POST" onsubmit="return confirm('Apakah Anda yakin sudah sesuai untuk mengupdate data pengguna \'' + '{{ $user->name }}' + '\' ini?')">
                 @csrf
                 @method('PUT')
 

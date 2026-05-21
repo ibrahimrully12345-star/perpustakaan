@@ -5,7 +5,8 @@
     <h3 class="fw-bold mb-4">Tambah Buku Baru</h3>
     <div class="card shadow-sm col-md-8">
         <div class="card-body">
-            <form action="/buku" method="POST" enctype="multipart/form-data">
+            <form action="/buku" method="POST" enctype="multipart/form-data" 
+            onsubmit="return confirm('Apakah Anda yakin untuk menambahkan buku berjudul \'' + this.judul.value + '\' penulis \'' + this.penulis.value + '\' ke dalam data?')">
                 @csrf
                 <div class="mb-3">
                     <label class="form-label">Judul Buku</label>
@@ -33,7 +34,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Cover Buku (Gambar)</label>
-                    <input type="file" name="gambar" class="form-control" required>
+                    <input type="file" name="gambar" class="form-control" accept="image/*" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Simpan Buku</button>
                 <a href="/katalog-admin" class="btn btn-secondary">Batal</a>

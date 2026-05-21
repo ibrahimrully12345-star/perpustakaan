@@ -4,9 +4,16 @@
 <div class="container-fluid px-4">
     <h3 class="fw-bold mb-4 pt-3">Tambah Transaksi Peminjaman</h3>
 
-    <div class="card shadow-sm border-0 col-md-6">
+    <div class="card shadow-sm border-0 col-md-6" style="border-radius: 12px;">
         <div class="card-body p-4">
-            <form action="/peminjaman/simpan" method="POST">
+            {{-- Alert Error jika validasi Backend gagal --}}
+            @if(session('error'))
+                <div class="alert alert-danger border-0 shadow-sm mb-3" style="border-radius: 8px;">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
+                </div>
+            @endif
+
+            <form action="/peminjaman/simpan" method="POST" onsubmit="return confirm('Apakah Anda yakin untuk menambahkan transaksi peminjaman ini ke dalam data?')">
                 @csrf
                 <div class="mb-3">
                     <label class="form-label fw-bold">Pilih Peminjam</label>
@@ -16,7 +23,6 @@
                             @if($u->role == 'peminjam')
                                 <option value="{{ $u->id }}">{{ $u->name }}</option>
                             @endif
-                            
                         @endforeach
                     </select>
                 </div>
@@ -34,23 +40,22 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Tanggal Pinjam</label>
-                        <input type="date" name="tanggal_pinjam" class="form-control" value="{{ date('Y-m-d') }}" required>
+                        {{-- FIX: Ditambahkan id dan onchange mengunci batas tanggal minimum kanan --}}
+                        <input type="date" name="tanggal_pinjam" id="tgl_pinjam" class="form-control" 
+                               value="{{ date('Y-m-d') }}" onchange="document.getElementById('tgl_kembali').min = this.value" required>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Batas Kembali</label>
-                        <input type="date" name="tanggal_kembali" class="form-control" required>
+                        {{-- FIX: Ditambahkan id dan min bawaan hari ini --}}
+                        <input type="date" name="tanggal_kali" id="tgl_kembali" name="tanggal_kembali" class="form-control" 
+                               min="{{ date('Y-m-d') }}" required>
                     </div>
                 </div>
 
                 <div class="d-flex gap-2 mt-3">
-                    <button type="submit" class="btn btn-primary px-4">Simpan Transaksi</button>
-                    <a href="/peminjaman" class="btn btn-light border px-4">Batal</a>
+                    <button type="submit" class="btn btn-primary px-4" style="border-radius: 8px;">Simpan Transaksi</button>
+                    <a href="/peminjaman" class="btn btn-light border px-4" style="border-radius: 8px;">Batal</a>
                 </div>
-                @if(session('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
-@endif
             </form>
         </div>
     </div>

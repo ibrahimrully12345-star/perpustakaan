@@ -3,7 +3,8 @@
 @section('content')
 <div class="container-fluid">
     <h3>Edit Buku: {{ $buku->judul }}</h3>
-    <form action="/buku/{{ $buku->id }}" method="POST" enctype="multipart/form-data">
+    <form action="/buku/{{ $buku->id }}" method="POST" enctype="multipart/form-data"
+      onsubmit="return confirm('Apakah Anda yakin sudah sesuai untuk mengupdate data buku \'' + '{{ $buku->judul }}' + '\' ini?')">
         @csrf
         @method('PUT') <!-- Penting untuk Update -->
         <div class="mb-3">
@@ -29,7 +30,7 @@
         <!-- Tambahkan input lainnya seperti penulis, stok, dll mirip form tambah -->
         <div class="mb-3">
             <label>Cover Baru (Kosongkan jika tidak ganti)</label>
-            <input type="file" name="gambar" class="form-control">
+            <input type="file" name="gambar" class="form-control" accept="image/*">
         </div>
         <button type="submit" class="btn btn-success">Update Buku</button>
     </form>

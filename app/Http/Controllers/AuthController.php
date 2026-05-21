@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; 
 use App\Models\User;
+use App\Models\Buku;
+use App\Models\Peminjaman;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -19,10 +21,8 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        // FITUR BARU: Menangkap nilai checkbox 'remember' (bernilai true jika dicentang)
         $remember = $request->has('remember');
 
-        // Memasukkan variabel $remember ke dalam Auth::attempt agar session tersimpan lama
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
             if (Auth::user()->role == 'admin' || Auth::user()->role == 'petugas') {
@@ -31,20 +31,18 @@ class AuthController extends Controller
             return redirect('/katalog');
         }
 
-        return back()->withErrors(['email' => 'Email atau password salah.']);
+        return back()->withErrors(['email' => 'Email atau password salah.'])->withInput();
     }
 
     public function showRegister() {
         return view('auth.register');
     }
 
-    // FUNGSI 1: Untuk Registrasi Mandiri (Hanya Peminjam) - Dipakai di halaman depan
     public function register(Request $request) {
-        // PERBAIKAN VALIDASI: Minimal 6 karakter dan wajib COCOK dengan input confirmation
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed' // 'confirmed' otomatis mengecek password_confirmation
+            'password' => 'required|string|min:6|confirmed'
         ], [
             'password.min' => 'Password minimal harus 6 karakter!',
             'password.confirmed' => 'Konfirmasi ulangi password tidak cocok!',
@@ -55,61 +53,96 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'peminjam', // Terkunci otomatis
+            'role' => 'peminjam',
         ]);
 
         return redirect('/login')->with('success', 'Pendaftaran berhasil! Silakan login.');
     }
 
-    // FUNGSI 2: Untuk Admin Tambah User (Bisa Pilih Role) - Dipakai di Dashboard Admin
+    public function dashboard() {
+        if (Auth::user()->role == 'peminjam') {
+            return redirect('/katalog');
+        }
+
+        // --- LOGIKA OTOMATIS BATALKAN RESERVASI ---
+        $expired = Peminjaman::where('status', 'reservasi')
+                    ->where('batas_ambil', '<', now())
+                    ->get();
+
+        foreach($expired as $e) {
+            Buku::where('id', $e->buku_id)->increment('stok', 1);
+            $e->update(['status' => 'batal']);
+        }
+
+        return view('admin.dashboard', [
+            'jumlahBuku'      => Buku::count(),
+            'jumlahUser'      => User::count(),
+            'jumlahPinjam'    => Peminjaman::where('status', 'dipinjam')->count(),
+            'jumlahReservasi' => Peminjaman::where('status', 'reservasi')->count(),
+        ]);
+    }
+
+    // --- MANAJEMEN USERS (ADMIN) ---
+    public function indexUser(Request $request) {
+        $cari = $request->cari;
+        $role = $request->role;
+
+        $semuaUser = User::when($cari, function ($query) use ($cari) {
+            return $query->where(function ($q) use ($cari) {
+                $q->where('name', 'like', "%$cari%")
+                  ->orWhere('email', 'like', "%$cari%");
+            });
+        })->when($role, function ($query) use ($role) {
+            return $query->where('role', $role);
+        })->orderBy('created_at', 'desc')->get();
+
+        return view('admin.users.index', compact('semuaUser'));
+    }
+
+    public function showCreateUser() {
+        return view('admin.users.tambah');
+    }
+
     public function storeUser(Request $request) {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:5',
-            'role' => 'required'
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'password' => 'required|string|min:6',
+            'role' => 'required|in:admin,petugas,peminjam',
+        ], [
+            'email.unique' => 'Email ini sudah terdaftar di sistem!',
+            'password.min' => 'Password minimal harus 6 karakter!'
         ]);
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role, // Dinamis sesuai pilihan Admin
+            'role' => $request->role,
         ]);
 
-        return redirect('/users')->with('success', 'Pengguna berhasil ditambahkan!');
+        return redirect('/users')->with('success', 'Pengguna baru berhasil ditambahkan!');
     }
 
-    // FUNGSI 3: Menampilkan halaman Edit User
     public function editUser($id) {
         $user = User::findOrFail($id);
         return view('admin.users.edit', compact('user'));
     }
 
-    // FUNGSI 4: Memproses Update User
     public function updateUser(Request $request, $id) {
         $user = User::findOrFail($id);
         
-        // Validasi hanya untuk Nama dan Role
         $request->validate([
             'name' => 'required|string|max:255',
-            'role' => 'required'
+            'role' => 'required|in:admin,petugas,peminjam',
         ]);
 
-        $user->name = $request->name;
-        $user->role = $request->role;
+        $user->update([
+            'name' => $request->name,
+            'role' => $request->role,
+        ]);
 
-        // Logika password dan email dihapus demi privasi user
-        $user->save();
-
-        return redirect('/users')->with('success', 'Data pengguna berhasil diperbarui.');
-    }
-
-    public function logout(Request $request) {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect('/');
+        return redirect('/users')->with('success', 'Data pengguna berhasil diperbarui!');
     }
 
     public function destroyUser($id) {
@@ -119,5 +152,64 @@ class AuthController extends Controller
         }
         $user->delete();
         return back()->with('success', 'Pengguna berhasil dihapus!');
+    }
+
+    // --- UBAH PASSWORD ---
+    public function showUbahPassword() {
+        return view('auth.ubah_password');
+    }
+
+    public function ubahPassword(Request $request) {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+        ], [
+            'new_password.min' => 'Password baru minimal harus 6 karakter!',
+            'new_password.confirmed' => 'Konfirmasi password baru tidak cocok!'
+        ]);
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->with('error', 'Password saat ini yang Anda masukkan salah!');
+        }
+
+        $user->update([
+            'password' => Hash::make($request->new_password)
+        ]);
+
+        return back()->with('success', 'Password berhasil diperbarui!');
+    }
+
+    // --- PENGATURAN AKUN ---
+    public function showPengaturanAkun() {
+        return view('auth.pengaturan_akun');
+    }
+
+    public function updatePengaturanAkun(Request $request) {
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+        ], [
+            'email.unique' => 'Alamat email ini sudah digunakan oleh pengguna lain!'
+        ]);
+
+        /** @var \App\Models\User $user */
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
+        return back()->with('success', 'Informasi profil akun Anda berhasil diperbarui!');
+    }
+
+    public function logout(Request $request) {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
     }
 }
