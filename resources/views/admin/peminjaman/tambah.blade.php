@@ -47,8 +47,7 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Batas Kembali</label>
                         {{-- FIX: Ditambahkan id dan min bawaan hari ini --}}
-                        <input type="date" name="tanggal_kali" id="tgl_kembali" name="tanggal_kembali" class="form-control" 
-                               min="{{ date('Y-m-d') }}" required>
+                        <input type="date" name="tanggal_kembali" id="tgl_kembali" class="form-control" min="{{ date('Y-m-d') }}" required>
                     </div>
                 </div>
 

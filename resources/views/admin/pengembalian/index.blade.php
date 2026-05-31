@@ -66,8 +66,9 @@
                             <td>{{ $r->tgl_pinjam ? \Carbon\Carbon::parse($r->tgl_pinjam)->format('d/m/Y') : '-' }}</td>
                             <td>{{ $r->updated_at ? \Carbon\Carbon::parse($r->updated_at)->format('d/m/Y') : '-' }}</td>
                             <td>
-                                @if($r->denda > 0)
-                                    <span class="badge bg-danger px-2 py-1">Rp {{ number_format($r->denda, 0, ',', '.') }}</span>
+                                {{-- FIX: Mengubah syarat dan membungkus dengan fungsi abs() otomatis anti-minus --}}
+                                @if($r->denda != 0)
+                                    <span class="badge bg-danger px-2 py-1">Rp {{ number_format(abs($r->denda), 0, ',', '.') }}</span>
                                 @else
                                     <span class="badge bg-success px-2 py-1">Tidak Ada</span>
                                 @endif

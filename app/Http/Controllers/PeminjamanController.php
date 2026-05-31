@@ -80,15 +80,18 @@ class PeminjamanController extends Controller
         $pinjam = Peminjaman::findOrFail($id);
         
         if($pinjam->status == 'dipinjam') {
-            $hariIni = Carbon::today();
+            $hariIni = Carbon::today()->startOfDay();
             $jatuhTempo = Carbon::parse($pinjam->tgl_kembali_plan)->startOfDay();
 
             $denda = 0;
+            
+            // FIX: Jika hari ini sudah melewati batas jatuh tempo, hitung denda positif mutlak
             if ($hariIni->gt($jatuhTempo)) {
                 $selisihHari = $hariIni->diffInDays($jatuhTempo);
-                $denda = $selisihHari * 1000;
+                $denda = abs($selisihHari) * 1000; // <--- FIX: Dipaksa selalu positif mutlak
             }
 
+            // Simpan perubahan ke database
             $pinjam->update([
                 'status' => 'selesai',
                 'denda'  => $denda,
@@ -97,7 +100,7 @@ class PeminjamanController extends Controller
 
             Buku::where('id', $pinjam->buku_id)->increment('stok', 1);
 
-            return redirect('/peminjaman')->with('success', 'Berhasil dikembalikan!');
+            return redirect('/peminjaman')->with('success', 'Berhasil dikembalikan! ' . ($denda > 0 ? 'Denda tercatat: Rp ' . number_format($denda) : 'Tepat waktu.'));
         }
         return back();
     }
@@ -133,7 +136,7 @@ class PeminjamanController extends Controller
         }
 
         if ($denda_filter == 'berdenda') {
-            $query->where('denda', '>', 0);
+            $query->where('denda', '!=', 0); // <--- FIX: Mengakomodasi jika ada data lama yang minus
         } elseif ($denda_filter == 'bebas') {
             $query->where('denda', 0);
         }
@@ -148,15 +151,19 @@ class PeminjamanController extends Controller
         $tgl_mulai = $request->tgl_mulai;
         $tgl_selesai = $request->tgl_selesai;
 
+        // Ambil data peminjaman selesai dengan relasi user dan buku
         $query = Peminjaman::with(['user', 'buku'])->where('status', 'selesai');
 
+        // Filter jika petugas memilih range tanggal tertentu
         if ($tgl_mulai && $tgl_selesai) {
             $query->whereDate('updated_at', '>=', $tgl_mulai)
                   ->whereDate('updated_at', '<=', $tgl_selesai);
         }
 
-        $laporan = $query->get();
+        // Urutkan data berdasarkan waktu pengembalian terbaru (updated_at) paling atas
+        $laporan = $query->orderBy('updated_at', 'desc')->get();
 
+        // Hitung total denda keseluruhan secara otomatis mutlak (positif)
         $totalDenda = $laporan->sum(function($item) {
             return abs($item->denda);
         });
