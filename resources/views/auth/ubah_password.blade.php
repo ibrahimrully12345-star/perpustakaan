@@ -39,19 +39,28 @@
 
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-secondary">Password Saat Ini</label>
-                            <input type="password" name="current_password" class="form-control" placeholder="Masukkan password lama" required>
+                            <div class="input-group">
+                                <input type="password" id="current_password" name="current_password" class="form-control" placeholder="Masukkan password lama" required>
+                                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('current_password', this)" aria-label="Tampilkan password"><i class="bi bi-eye"></i></button>
+                            </div>
                         </div>
 
                         <hr class="text-muted my-3 opacity-25">
 
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-secondary">Password Baru</label>
-                            <input type="password" name="new_password" class="form-control" placeholder="Minimal 6 karakter" required>
+                            <div class="input-group">
+                                <input type="password" id="new_password" name="new_password" class="form-control" placeholder="Minimal 8 karakter" required>
+                                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('new_password', this)" aria-label="Tampilkan password"><i class="bi bi-eye"></i></button>
+                            </div>
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label small fw-bold text-secondary">Konfirmasi Password Baru</label>
-                            <input type="password" name="new_password_confirmation" class="form-control" placeholder="Ulangi password baru" required>
+                            <div class="input-group">
+                                <input type="password" id="new_password_confirmation" name="new_password_confirmation" class="form-control" placeholder="Ulangi password baru" required>
+                                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('new_password_confirmation', this)" aria-label="Tampilkan password"><i class="bi bi-eye"></i></button>
+                            </div>
                         </div>
 
                         <div class="d-grid">
@@ -66,3 +75,14 @@
     </div>
 </div>
 @endsection
+
+<script>
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        const icon = button.querySelector('i');
+        const isHidden = input.type === 'password';
+        input.type = isHidden ? 'text' : 'password';
+        icon.classList.toggle('bi-eye', !isHidden);
+        icon.classList.toggle('bi-eye-slash', isHidden);
+    }
+</script>

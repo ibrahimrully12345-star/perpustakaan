@@ -95,7 +95,8 @@
                 <label class="form-label small fw-bold text-dark-brown mb-1">Password</label>
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0 py-1"><i class="bi bi-lock text-muted"></i></span>
-                    <input type="password" name="password" class="form-control border-start-0" placeholder="Minimal 6 karakter" required>
+                    <input type="password" id="password" name="password" class="form-control border-start-0" placeholder="Minimal 8 karakter" required>
+                    <button type="button" class="btn btn-outline-secondary border-start-0" onclick="togglePassword('password', this)" aria-label="Tampilkan password"><i class="bi bi-eye text-muted"></i></button>
                 </div>
             </div>
             
@@ -103,7 +104,8 @@
                 <label class="form-label small fw-bold text-dark-brown mb-1">Ulangi Password</label>
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0 py-1"><i class="bi bi-shield-lock text-muted"></i></span>
-                    <input type="password" name="password_confirmation" class="form-control border-start-0" placeholder="Ulangi password" required>
+                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control border-start-0" placeholder="Ulangi password" required>
+                    <button type="button" class="btn btn-outline-secondary border-start-0" onclick="togglePassword('password_confirmation', this)" aria-label="Tampilkan password"><i class="bi bi-eye text-muted"></i></button>
                 </div>
             </div>
 
@@ -119,5 +121,15 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        const icon = button.querySelector('i');
+        const isHidden = input.type === 'password';
+        input.type = isHidden ? 'text' : 'password';
+        icon.classList.toggle('bi-eye', !isHidden);
+        icon.classList.toggle('bi-eye-slash', isHidden);
+    }
+</script>
 </body>
 </html>

@@ -48,9 +48,13 @@ class PeminjamanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'buku_id' => 'required|exists:bukus,id',
             'tanggal_pinjam' => 'required|date',
             'tanggal_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
         ], [
+            'user_id.required' => 'Peminjam wajib dipilih!',
+            'buku_id.required' => 'Buku wajib dipilih!',
             'tanggal_kembali.after_or_equal' => 'Gagal mencatat! Tanggal batas kembali harus sama atau setelah tanggal pinjam.'
         ]);
 
@@ -64,9 +68,11 @@ class PeminjamanController extends Controller
 
         Peminjaman::create([
             'user_id'           => $request->user_id,
-            'buku_id'           => $request->buku_id, 
-            'tgl_pinjam'        => $request->tanggal_pinjam, 
-            'tgl_kembali_plan'  => $request->tanggal_kembali, 
+            'buku_id'           => $request->buku_id,
+            'tgl_reservasi'     => now(),
+            'batas_ambil'       => now()->addHours(2),
+            'tgl_pinjam'        => $request->tanggal_pinjam,
+            'tgl_kembali_plan'  => $request->tanggal_kembali,
             'status'            => 'dipinjam',
             'denda'             => 0,
         ]);

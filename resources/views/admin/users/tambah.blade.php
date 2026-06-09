@@ -23,7 +23,10 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Password</label>
-                            <input type="password" name="password" class="form-control" placeholder="Minimal 5 karakter" required>
+                            <div class="input-group">
+                                <input type="password" id="adminUserPassword" name="password" class="form-control" placeholder="Minimal 8 karakter" required>
+                                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('adminUserPassword', this)" aria-label="Tampilkan password"><i class="bi bi-eye"></i></button>
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -47,3 +50,14 @@
     </div>
 </div>
 @endsection
+
+<script>
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        const icon = button.querySelector('i');
+        const isHidden = input.type === 'password';
+        input.type = isHidden ? 'text' : 'password';
+        icon.classList.toggle('bi-eye', !isHidden);
+        icon.classList.toggle('bi-eye-slash', isHidden);
+    }
+</script>

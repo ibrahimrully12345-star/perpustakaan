@@ -42,9 +42,9 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed'
+            'password' => 'required|string|min:8|confirmed'
         ], [
-            'password.min' => 'Password minimal harus 6 karakter!',
+            'password.min' => 'Password minimal harus 8 karakter!',
             'password.confirmed' => 'Konfirmasi ulangi password tidak cocok!',
             'email.unique' => 'Alamat email ini sudah terdaftar!'
         ]);
@@ -107,11 +107,11 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:8',
             'role' => 'required|in:admin,petugas,peminjam',
         ], [
             'email.unique' => 'Email ini sudah terdaftar di sistem!',
-            'password.min' => 'Password minimal harus 6 karakter!'
+            'password.min' => 'Password minimal harus 8 karakter!'
         ]);
 
         User::create([
@@ -162,9 +162,9 @@ class AuthController extends Controller
     public function ubahPassword(Request $request) {
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|min:6|confirmed',
+            'new_password' => 'required|min:8|confirmed',
         ], [
-            'new_password.min' => 'Password baru minimal harus 6 karakter!',
+            'new_password.min' => 'Password baru minimal harus 8 karakter!',
             'new_password.confirmed' => 'Konfirmasi password baru tidak cocok!'
         ]);
 

@@ -21,7 +21,7 @@
         </div>
         <div class="mb-3">
             <label>Tahun Terbit</label>
-            <input type="number" name="tahun_terbit" class="form-control" value="{{ $buku->tahun_terbit }}">
+            <input type="date" name="tahun_terbit" class="form-control" max="{{ date('Y-m-d') }}" value="{{ $buku->tahun_terbit ? $buku->tahun_terbit . '-01-01' : '' }}">
         </div>
         <div class="mb-3">
             <label>Stok</label>

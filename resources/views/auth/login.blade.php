@@ -94,7 +94,8 @@
                 <label class="form-label small fw-bold text-dark-brown">Password</label>
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
-                    <input type="password" name="password" class="form-control border-start-0" placeholder="Masukkan password" required>
+                    <input type="password" id="loginPassword" name="password" class="form-control border-start-0" placeholder="Masukkan password" required>
+                    <button type="button" class="btn btn-outline-secondary border-start-0" onclick="togglePassword('loginPassword', this)" aria-label="Tampilkan password"><i class="bi bi-eye text-muted"></i></button>
                 </div>
             </div>
 
@@ -119,5 +120,15 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        const icon = button.querySelector('i');
+        const isHidden = input.type === 'password';
+        input.type = isHidden ? 'text' : 'password';
+        icon.classList.toggle('bi-eye', !isHidden);
+        icon.classList.toggle('bi-eye-slash', isHidden);
+    }
+</script>
 </body>
 </html>
