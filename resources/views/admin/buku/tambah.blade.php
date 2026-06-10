@@ -24,8 +24,11 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Tahun Terbit</label>
-                        <input type="date" name="tahun_terbit" class="form-control" max="{{ date('Y-m-d') }}" required>
+                        <label class="form-label fw-semibold"><i class="bi bi-calendar3 me-1 text-primary"></i>Tahun Terbit</label>
+                        <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-calendar2-week text-primary"></i></span>
+                            <input type="number" name="tahun_terbit" class="form-control border-0 bg-light fw-semibold text-center" min="1900" max="{{ date('Y') }}" inputmode="numeric" pattern="[0-9]*" placeholder="Contoh: 2024" required>
+                        </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Stok</label>

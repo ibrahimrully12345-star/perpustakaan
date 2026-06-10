@@ -20,8 +20,11 @@
             <input type="text" name="penerbit" class="form-control" value="{{ $buku->penerbit }}">
         </div>
         <div class="mb-3">
-            <label>Tahun Terbit</label>
-            <input type="date" name="tahun_terbit" class="form-control" max="{{ date('Y-m-d') }}" value="{{ $buku->tahun_terbit ? $buku->tahun_terbit . '-01-01' : '' }}">
+            <label class="form-label fw-semibold"><i class="bi bi-calendar3 me-1 text-primary"></i>Tahun Terbit</label>
+            <div class="input-group shadow-sm rounded-3 overflow-hidden">
+                <span class="input-group-text bg-light border-0"><i class="bi bi-calendar2-week text-primary"></i></span>
+                <input type="number" name="tahun_terbit" class="form-control border-0 bg-light fw-semibold text-center" min="1900" max="{{ date('Y') }}" inputmode="numeric" pattern="[0-9]*" value="{{ old('tahun_terbit', $buku->tahun_terbit) }}" placeholder="Contoh: 2024">
+            </div>
         </div>
         <div class="mb-3">
             <label>Stok</label>

@@ -45,7 +45,7 @@ class BukuController extends Controller
             'judul' => 'required|string|max:255',
             'penulis' => 'required|string|max:255',
             'penerbit' => 'required|string|max:255',
-            'tahun_terbit' => 'required|date|before_or_equal:today',
+            'tahun_terbit' => 'required|integer|min:1900|max:' . date('Y'),
             'stok' => 'required|integer|min:0',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ], [
@@ -53,8 +53,9 @@ class BukuController extends Controller
             'penulis.required' => 'Nama penulis tidak boleh kosong!',
             'penerbit.required' => 'Nama penerbit tidak boleh kosong!',
             'tahun_terbit.required' => 'Tahun terbit wajib diisi!',
-            'tahun_terbit.date' => 'Tahun terbit harus berupa tanggal yang valid!',
-            'tahun_terbit.before_or_equal' => 'Tahun terbit tidak boleh melebihi hari ini!',
+            'tahun_terbit.integer' => 'Tahun terbit harus berupa angka!',
+            'tahun_terbit.min' => 'Tahun terbit minimal 1900!',
+            'tahun_terbit.max' => 'Tahun terbit tidak boleh melebihi tahun sekarang!',
             'stok.required' => 'Stok buku tidak boleh kosong!',
             'stok.integer' => 'Stok harus berupa angka bulat!',
             'stok.min' => 'Stok buku tidak boleh bernilai minus!',
@@ -73,7 +74,7 @@ class BukuController extends Controller
             'judul' => $request->judul,
             'penulis' => $request->penulis,
             'penerbit' => $request->penerbit,
-            'tahun_terbit' => (int) date('Y', strtotime($request->tahun_terbit)),
+            'tahun_terbit' => (int) $request->tahun_terbit,
             'stok' => $request->stok,
             'gambar' => $namaFile,
         ]);
@@ -95,17 +96,18 @@ class BukuController extends Controller
             'judul' => 'required|string|max:255',
             'penulis' => 'required|string|max:255',
             'penerbit' => 'required|string|max:255',
-            'tahun_terbit' => 'required|date|before_or_equal:today',
+            'tahun_terbit' => 'required|integer|min:1900|max:' . date('Y'),
             'stok' => 'required|integer|min:0',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ], [
             'stok.min' => 'Stok buku tidak boleh bernilai minus!',
-            'tahun_terbit.date' => 'Tahun terbit harus berupa tanggal yang valid!',
-            'tahun_terbit.before_or_equal' => 'Tahun terbit tidak boleh melebihi hari ini!'
+            'tahun_terbit.integer' => 'Tahun terbit harus berupa angka!',
+            'tahun_terbit.min' => 'Tahun terbit minimal 1900!',
+            'tahun_terbit.max' => 'Tahun terbit tidak boleh melebihi tahun sekarang!'
         ]);
 
         $data = $request->all();
-        $data['tahun_terbit'] = (int) date('Y', strtotime($request->tahun_terbit));
+        $data['tahun_terbit'] = (int) $request->tahun_terbit;
         
         if ($request->hasFile('gambar')) {
             if ($buku->gambar && file_exists(public_path('img/' . $buku->gambar))) {

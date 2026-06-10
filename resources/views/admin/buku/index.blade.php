@@ -4,9 +4,11 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold" style="color: #2b1506;">Manajemen Data Buku</h3>
+        @if(in_array(Auth::user()->role, ['admin', 'petugas']))
         <a href="/buku/tambah" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
             <i class="bi bi-plus-lg"></i> Tambah Buku Baru
         </a>
+        @endif
     </div>
 
     <div class="row mb-4">
@@ -48,11 +50,12 @@
                                 </span>
                             </td>
                             <td class="text-center">
+    @if(in_array(Auth::user()->role, ['admin', 'petugas']))
     <div class="d-flex justify-content-center gap-1">
         <a href="/buku/edit/{{ $buku->id }}" class="btn btn-warning btn-sm text-dark px-2 py-1" title="Edit Buku">
             <i class="bi bi-pencil-fill"></i>Edit
         </a>
-        
+
         <form action="/buku/{{ $buku->id }}" method="POST" onsubmit="return confirm('Yakin hapus buku ini?')" class="m-0">
             @csrf
             @method('DELETE')
@@ -61,6 +64,9 @@
             </button>
         </form>
     </div>
+    @else
+    <span class="text-muted small">Tidak tersedia</span>
+    @endif
 </td>
                         </tr>
                         @endforeach

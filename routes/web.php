@@ -22,8 +22,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->middleware('role:admin,petugas');
 
-    Route::middleware('role:admin')->group(function () {
+    Route::middleware('role:admin,petugas')->group(function () {
         Route::get('/katalog-admin', [BukuController::class, 'indexAdmin']);
+    });
+
+    Route::middleware('role:admin,petugas')->group(function () {
         Route::get('/buku/tambah', [BukuController::class, 'create']);
         Route::post('/buku', [BukuController::class, 'store']);
         Route::get('/buku/edit/{id}', [BukuController::class, 'edit']);
