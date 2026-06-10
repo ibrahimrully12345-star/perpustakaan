@@ -27,7 +27,7 @@
                         <label class="form-label fw-semibold"><i class="bi bi-calendar3 me-1 text-primary"></i>Tahun Terbit</label>
                         <div class="input-group shadow-sm rounded-3 overflow-hidden">
                             <span class="input-group-text bg-light border-0"><i class="bi bi-calendar2-week text-primary"></i></span>
-                            <input type="number" name="tahun_terbit" class="form-control border-0 bg-light fw-semibold text-center" min="1900" max="{{ date('Y') }}" inputmode="numeric" pattern="[0-9]*" placeholder="Contoh: 2024" required>
+                            <input type="number" name="tahun_terbit" class="form-control border-0 bg-light fw-semibold text-center no-number-arrows" min="1900" max="{{ date('Y') }}" inputmode="numeric" pattern="[0-9]*" placeholder="Contoh: 2024" required>
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
